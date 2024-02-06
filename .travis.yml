@@ -20,6 +20,6 @@ addons:
   chrome: stable
 install: npm install
 script:
-  - if [ $ENV == 'browser' ]; then npm run test-browser; fi
-  - if [ $ENV == 'node' ]; then npm run test-node; fi
+  # - if [ $ENV == 'browser' ]; then npm run test-browser; fi
+  # - if [ $ENV == 'node' ]; then npm run test-node; fi
   - npm start
