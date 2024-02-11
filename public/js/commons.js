@@ -24,73 +24,14 @@ async function requestExternalImage(imageUrl) {
 
 function renderNavBar(navbarId, exampleUri) {
   const examples = [
-    {
-      uri: 'face_detection',
-      name: 'Face Detection'
-    },
-    {
-      uri: 'face_landmark_detection',
-      name: 'Face Landmark Detection'
-    },
-    {
-      uri: 'face_expression_recognition',
-      name: 'Face Expression Recognition'
-    },
-    {
-      uri: 'age_and_gender_recognition',
-      name: 'Age and Gender Recognition'
-    },
-    {
-      uri: 'face_recognition',
-      name: 'Face Recognition'
-    },
-    {
-      uri: 'face_extraction',
-      name: 'Face Extraction'
-    },
-    {
-      uri: 'video_face_tracking',
-      name: 'Video Face Tracking'
-    },
-    {
-      uri: 'webcam_face_detection',
-      name: 'Webcam Face Detection'
-    },
+    
     {
       uri: 'webcam_face_landmark_detection',
       name: 'Webcam Face Landmark Detection'
     },
     {
-      uri: 'webcam_face_expression_recognition',
-      name: 'Webcam Face Expression Recognition'
-    },
-    {
-      uri: 'webcam_age_and_gender_recognition',
-      name: 'Webcam Age and Gender Recognition'
-    },
-    {
-      uri: 'bbt_face_landmark_detection',
-      name: 'BBT Face Landmark Detection'
-    },
-    {
-      uri: 'bbt_face_similarity',
-      name: 'BBT Face Similarity'
-    },
-    {
-      uri: 'bbt_face_matching',
-      name: 'BBT Face Matching'
-    },
-    {
-      uri: 'bbt_face_recognition',
-      name: 'BBT Face Recognition'
-    },
-    {
-      uri: 'batch_face_landmarks',
-      name: 'Batch Face Landmark Detection'
-    },
-    {
-      uri: 'batch_face_recognition',
-      name: 'Batch Face Recognition'
+      uri: 'trial',
+      name: 'Trial'
     }
   ]
 
@@ -115,19 +56,7 @@ function renderNavBar(navbarId, exampleUri) {
   menuButton.appendChild(menuButtonIcon)
   navbar.appendChild(menuButton)
 
-  const li = document.createElement('li')
-  const githubLink = document.createElement('a')
-  githubLink.classList.add('waves-effect', 'waves-light', 'side-by-side')
-  githubLink.id = 'github-link'
-  githubLink.href = 'https://github.com/justadudewhohacks/face-api.js'
-  const h5 = document.createElement('h5')
-  h5.innerHTML = 'face-api.js'
-  githubLink.appendChild(h5)
-  const githubLinkIcon = document.createElement('img')
-  githubLinkIcon.src = 'github_link_icon.png'
-  githubLink.appendChild(githubLinkIcon)
-  li.appendChild(githubLink)
-  menuContent.appendChild(li)
+  
 
   examples
     .forEach(ex => {
