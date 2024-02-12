@@ -37,6 +37,7 @@
             <option value="camera_preview">Camera Preview</option>
             <option value="vibration">Vibration</option>
             <option value="sound">Sound</option>
+            <option value="brightness">Brightness</option>
           </select>
           <label>Select Alert Type</label>
         </div>
@@ -101,7 +102,6 @@
         });
 
         if (isInstruder) {
-          
           $('#shoulderSurferDetector').text("Detected");
           let alertType = $('#selectAlertType').val();
           if (alertType == "alert") {
@@ -112,7 +112,9 @@
           } else if(alertType == 'sound'){
             var sound = new Audio('sound.wav');
               sound.play()
-          }else {
+          } else if (alertType == "brightness") {
+            setBrightness(15);
+          } else {
             navigator.vibrate([
               100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
             ]);
@@ -120,6 +122,7 @@
 
         } else {
           $('#shoulderSurferDetector').text("");
+          
         }
 
         // if (withBoxes) {
@@ -129,6 +132,11 @@
       }
 
       setTimeout(() => onPlay())
+    }
+
+    function setBrightness(val) {
+      let body = document.getElementsByTagName("html")[0];
+      body.setAttribute("style", "filter: brightness("+val+"%);");
     }
 
     async function run() {
@@ -196,11 +204,17 @@
     // function triggerAlert(alertType){
       
     // }
+    function alertSelectionOnChange() {
+      $('#selectAlertType').on('change', function(){
+        setBrightness(100);
+      })
+    }
 
     $(document).ready(function() {
       renderNavBar('#navbar', 'webcam_face_landmark_detection')
       initFaceDetectionControls()
       run()
+      alertSelectionOnChange()
       // console.log("Hello world");
     })
   </script>
