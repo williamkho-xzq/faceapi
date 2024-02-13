@@ -1,208 +1,214 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <script src="face-api.js"></script>
-  <script src="js/commons.js"></script>
-  <script src="js/faceDetectionControls.js"></script>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="face-api.js"></script>
+    <script src="js/commons.js"></script>
+    <script src="js/faceDetectionControls.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 </head>
+
 <body>
-  <div id="navbar"></div>
-  <div class="center-content page-container">
+    <div id="navbar"></div>
+    <div class="center-content page-container">
 
-    <div class="progress" id="loader">
-      <div class="indeterminate"></div>
-    </div>
-    <div style="position: relative" class="margin">
-      <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
-      <canvas id="overlay" />
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <h1 id="shoulderSurferDetector"></h1>
-      </div>
-    </div>
-    
-    
-    <div class="row">
-      <!-- alert-type-selector-control -->
-      <div class="col">
-        <div id="alert_type_selector_control" class="input-field">
-          <select id="selectAlertType">
-            <option value="alert">Alert</option>
-            <option value="camera_preview">Camera Preview</option>
-            <option value="vibration">Vibration</option>
-            <option value="sound">Sound</option>
-            <option value="notification"> Notification</option>
-          </select>
-          <label>Select Alert Type</label>
+        <div class="progress" id="loader">
+            <div class="indeterminate"></div>
         </div>
-      </div>
-      
-      <!-- alert-type-selector-control  -->
-    </div>
 
-  
-  </body>
+        <a class="waves-effect waves-light btn" id="previewToggle" onclick="togglePreviewVideo()">Hide Preview</a>
+        <div id="previewVideo" style="margin-top: 20px;">
+            <div style="position: relative" class="margin">
+                <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
+                <canvas id="overlay" />
+            </div>
+        </div>
 
-  <script>
+        <div class="row">
+            <div class="col">
+                <h1 id="shoulderSurferDetector"></h1>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <!-- alert-type-selector-control -->
+            <div class="col">
+                <div id="alert_type_selector_control" class="input-field">
+                    <select id="selectAlertType">
+                        <option value="alert">Alert</option>
+                        <option value="camera_preview">Camera Preview</option>
+                        <option value="vibration">Vibration</option>
+                        <option value="sound">Sound</option>
+                        <option value="notification"> Notification</option>
+                    </select>
+                    <label>Select Alert Type</label>
+                </div>
+            </div>
+
+            <!-- alert-type-selector-control  -->
+        </div>
+
+
+</body>
+
+<script>
     let forwardTimes = []
     let withBoxes = true
 
     function onChangeHideBoundingBoxes(e) {
-      withBoxes = !$(e.target).prop('checked')
+        withBoxes = !$(e.target).prop('checked')
     }
 
     function updateTimeStats(timeInMs) {
-      forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30)
-      const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
-      $('#time').val(`${Math.round(avgTimeInMs)} ms`)
-      $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
+        forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30)
+        const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
+        $('#time').val(`${Math.round(avgTimeInMs)} ms`)
+        $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
     }
 
     async function onPlay() {
-  const videoEl = $('#inputVideo').get(0)
+        const videoEl = $('#inputVideo').get(0)
 
-  if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
-    return setTimeout(() => onPlay())
+        if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+            return setTimeout(() => onPlay())
 
-  const options = getFaceDetectorOptions()
-  const ts = Date.now()
-  const results = await faceapi.detectAllFaces(videoEl, options).withFaceLandmarks()
+        const options = getFaceDetectorOptions()
+        const ts = Date.now()
+        const results = await faceapi.detectAllFaces(videoEl, options).withFaceLandmarks()
 
-  updateTimeStats(Date.now() - ts)
-  let isInstruder = false;
-  let intruders = [];
+        updateTimeStats(Date.now() - ts)
+        let isInstruder = false;
+        let intruders = [];
 
-  if (results && results.length > 1) {
-    console.log("Faces detected " + results.length);
-    const canvas = $('#overlay').get(0)
-    faceapi.matchDimensions(canvas, videoEl)
-    const dims = faceapi.matchDimensions(canvas, videoEl, true)
-    const resizedResults = faceapi.resizeResults(results, dims)
+        if (results && results.length > 1) {
+            console.log("Faces detected " + results.length);
+            const canvas = $('#overlay').get(0)
+            faceapi.matchDimensions(canvas, videoEl)
+            const dims = faceapi.matchDimensions(canvas, videoEl, true)
+            const resizedResults = faceapi.resizeResults(results, dims)
 
-    let intruders = results.slice(1);
+            let intruders = results.slice(1);
 
-intruders.forEach(fc => {
-  let orientation = detectOrientation(fc);
-  
-  
-  if (orientation == "center") {
-    isInstruder = true;
-  } else {
-    isInstruder = false;
-  }
-  //Trigger alert
-});
-console.log(isInstruder+' before if')
-    if (isInstruder) {
-      $('#shoulderSurferDetector').text("Detected");
-      let alertType = $('#selectAlertType').val();
-      if (alertType == "alert") {
-        alert("Take a rest");
-      } else if (alertType == "camera_preview") {
-        const resizedIntruderResults = faceapi.resizeResults(intruders, dims)
-        faceapi.draw.drawDetections(canvas, resizedIntruderResults)
-      } else if (alertType == 'sound') {
-        var sound = new Audio('sound.wav');
-        sound.play()
-      } else if (alertType == 'notification') {
-        if (Notification.permission !== 'denied') {
-          Notification.requestPermission().then(function(permission) {
-            if (permission === "granted") {
-              var notification = new Notification("Be Careful", {
-                // Optional: URL of the notification icon
-              });
+            intruders.forEach(fc => {
+                let orientation = detectOrientation(fc);
+
+
+                if (orientation == "center") {
+                    isInstruder = true;
+                } else {
+                    isInstruder = false;
+                }
+                //Trigger alert
+            });
+            console.log(isInstruder + ' before if')
+            if (isInstruder) {
+                $('#shoulderSurferDetector').text("Detected");
+                let alertType = $('#selectAlertType').val();
+                if (alertType == "alert") {
+                    alert("Take a rest");
+                } else if (alertType == "camera_preview") {
+                    const resizedIntruderResults = faceapi.resizeResults(intruders, dims)
+                    faceapi.draw.drawDetections(canvas, resizedIntruderResults)
+                } else if (alertType == 'sound') {
+                    var sound = new Audio('sound.wav');
+                    sound.play()
+                } else if (alertType == 'notification') {
+                    if (Notification.permission !== 'denied') {
+                        Notification.requestPermission().then(function (permission) {
+                            if (permission === "granted") {
+                                var notification = new Notification("Be Careful", {
+                                    // Optional: URL of the notification icon
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    navigator.vibrate([
+                        100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
+                    ]);
+                }
+            } else {
+                $('#shoulderSurferDetector').text("   ");
             }
-          });
         }
-      } else {
-        navigator.vibrate([
-          100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
-        ]);
-      }
-    } else {
-      $('#shoulderSurferDetector').text("   ");
-    }
-  }
 
-  if (isInstruder) {
-    setTimeout(() => {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - ts;
-      if (elapsedTime >= 2000) { // 3 seconds threshold
-        // Send alert for face detected for more than 3 seconds
-        // Trigger alert
-      } else {
-        onPlay(); // Continue face detection
-      }
-    }, 1000); // Check every second if face is detected for more than 3 seconds
-  } else {
-    setTimeout(() => onPlay())
-  }
-}
+        if (isInstruder) {
+            setTimeout(() => {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - ts;
+                if (elapsedTime >= 2000) { // 3 seconds threshold
+                    // Send alert for face detected for more than 3 seconds
+                    // Trigger alert
+                } else {
+                    onPlay(); // Continue face detection
+                }
+            }, 1000); // Check every second if face is detected for more than 3 seconds
+        } else {
+            setTimeout(() => onPlay())
+        }
+    }
 
 
     async function run() {
-      // load face detection and face landmark models
-      await changeFaceDetector(TINY_FACE_DETECTOR)
-      await faceapi.loadFaceLandmarkModel('/')
-      changeInputSize(224)
+        // load face detection and face landmark models
+        await changeFaceDetector(TINY_FACE_DETECTOR)
+        await faceapi.loadFaceLandmarkModel('/')
+        changeInputSize(224)
 
-      // try to access users webcam and stream the images
-      // to the video element
-      const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
-      const videoEl = $('#inputVideo').get(0)
-      videoEl.srcObject = stream
+        // try to access users webcam and stream the images
+        // to the video element
+        const stream = await navigator.mediaDevices.getUserMedia({video: {}})
+        const videoEl = $('#inputVideo').get(0)
+        videoEl.srcObject = stream
     }
 
     function getTop(l) {
-      return l.map((a) => a.y).reduce((a, b) => Math.min(a, b));
+        return l.map((a) => a.y).reduce((a, b) => Math.min(a, b));
     }
 
     function getMeanPosition(l) {
-      return l.map((a) => [a.x, a.y]).reduce((a, b) => [a[0] + b[0], a[1] + b[1]]).map((a) => a / l.length);
+        return l.map((a) => [a.x, a.y]).reduce((a, b) => [a[0] + b[0], a[1] + b[1]]).map((a) => a / l.length);
     }
 
-    function detectOrientation(detections){
-      if (!detections || detections == undefined) {
-        return null;
-      }
-      let landmark = detections["landmarks"];
-      var right_eye = getMeanPosition(landmark.getRightEye());
-      var left_eye = getMeanPosition(landmark.getLeftEye());
-      var nose = getMeanPosition(landmark.getNose());
-      var mouth= getMeanPosition(landmark.getMouth());
-      var jaw = getTop(landmark.getJawOutline());
-      // console.log(eye_right);
-      let detection = detections["detection"]
-      var rx = (jaw - mouth) / detection["_box"]["_height"];
-      var ry = (left_eye[0] + (right_eye[0] - left_eye[0]) / 2 - nose[0]) / detection["_box"]["_width"];
+    function detectOrientation(detections) {
+        if (!detections || detections == undefined) {
+            return null;
+        }
+        let landmark = detections["landmarks"];
+        var right_eye = getMeanPosition(landmark.getRightEye());
+        var left_eye = getMeanPosition(landmark.getLeftEye());
+        var nose = getMeanPosition(landmark.getNose());
+        var mouth = getMeanPosition(landmark.getMouth());
+        var jaw = getTop(landmark.getJawOutline());
+        // console.log(eye_right);
+        let detection = detections["detection"]
+        var rx = (jaw - mouth) / detection["_box"]["_height"];
+        var ry = (left_eye[0] + (right_eye[0] - left_eye[0]) / 2 - nose[0]) / detection["_box"]["_width"];
 
-      var face_val = ry.toFixed(2);
+        var face_val = ry.toFixed(2);
 
-      if(face_val < -0.06) {
-        //user moving in left direction
-        console.log("Left")
-        return "left";
-      }
-      else if(face_val >= 0.07) {
-        //user moving in right direction	
-        console.log("Right")
-        return "right";
-      }
-      else {
-        console.log("Center")
-        return "center";
-        //user face in facing front side of webcam
-      }
+        if (face_val < -0.06) {
+            //user moving in left direction
+            console.log("Left")
+            return "left";
+        }
+        else if (face_val >= 0.07) {
+            //user moving in right direction	
+            console.log("Right")
+            return "right";
+        }
+        else {
+            console.log("Center")
+            return "center";
+            //user face in facing front side of webcam
+        }
     }
 
-    function updateResults() {}
+    function updateResults() { }
 
     const inputAlertSelect = $('#selectAlertType')
     // inputAlertSelect.val(512)
@@ -210,28 +216,41 @@ console.log(isInstruder+' before if')
     inputAlertSelect.material_select()
 
     // function triggerAlert(alertType){
-      
+
     // }
 
-    $(document).ready(function() {
-    // Check if the browser supports the Notification API
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    }
-    // Check if the user has granted permission to display notifications
-    else if (Notification.permission === "granted") {
-      // If permission is granted, create a notification
-      var notification = new Notification("Notification Access granted", {
-     // Optional: URL of the notification icon
-      });
-    }
+    $(document).ready(function () {
+        // Check if the browser supports the Notification API
+        if (!("Notification" in window)) {
+            alert("This browser does not support desktop notification");
+        }
+        // Check if the user has granted permission to display notifications
+        else if (Notification.permission === "granted") {
+            // If permission is granted, create a notification
+            var notification = new Notification("Notification Access granted", {
+                // Optional: URL of the notification icon
+            });
+        }
 
-  
-      renderNavBar('#navbar', 'webcam_face_landmark_detection')
-      initFaceDetectionControls()
-      run()
-      // console.log("Hello world");
+
+        renderNavBar('#navbar', 'webcam_face_landmark_detection')
+        initFaceDetectionControls()
+        run()
+        // console.log("Hello world");
     })
-  </script>
+
+    function togglePreviewVideo() {
+        const previewEl = $('#previewVideo').get(0)
+        const previewToggle = $('#previewToggle').get(0)
+        if (previewEl.style.display === "none") {
+            previewEl.style.display = "block";
+            previewToggle.textContent = "Hide Preview";
+        } else {
+            previewEl.style.display = "none";
+            previewToggle.textContent = "Show Preview";
+        }
+    }
+</script>
 </body>
+
 </html>
