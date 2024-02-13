@@ -19,7 +19,7 @@
             <div class="indeterminate"></div>
         </div>
 
-        <a class="waves-effect waves-light btn" onclick="togglePreviewVideo()">Hide Preview</a>
+        <a class="waves-effect waves-light btn" id="previewToggle" onclick="togglePreviewVideo()">Hide Preview</a>
         <div id="previewVideo" style="margin-top: 20px;">
             <div style="position: relative" class="margin">
                 <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
@@ -226,10 +226,13 @@
     function togglePreviewVideo() {
         const previewEl = $('#previewVideo').get(0)
         const previewToggle = $('#previewToggle').get(0)
+        console.log("toggle clicked")
         if (previewEl.style.display === "none") {
+            console.log("case 1")
             previewEl.style.display = "block";
             previewToggle.textContent = "Hide Preview";
         } else {
+            console.log("case 2")
             previewEl.style.display = "none";
             previewToggle.textContent = "Show Preview";
         }
