@@ -226,13 +226,10 @@
     function togglePreviewVideo() {
         const previewEl = $('#previewVideo').get(0)
         const previewToggle = $('#previewToggle').get(0)
-        console.log("toggle clicked")
         if (previewEl.style.display === "none") {
-            console.log("case 1")
             previewEl.style.display = "block";
             previewToggle.textContent = "Hide Preview";
         } else {
-            console.log("case 2")
             previewEl.style.display = "none";
             previewToggle.textContent = "Show Preview";
         }
