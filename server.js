@@ -1,4 +1,5 @@
 const express = require('express')
+const session = require("express-session");
 const path = require('path')
 const { get } = require('request')
 
@@ -18,6 +19,23 @@ app.use(express.static(path.join(__dirname, './dist')))
 app.get('/', (req, res) => res.redirect('/webcam_face_landmark_detection'))
 app.get('/webcam_face_landmark_detection', (req, res) => res.sendFile(path.join(viewsDir, 'webcamFaceLandmarkDetection.html')))
 app.get('/trial', (req, res) => res.sendFile(path.join(viewsDir, 'trial.html')))
+
+app.use(
+  session(
+    {
+      secret: "my secret",
+      resave: false,
+      saveUninitialized: true,
+      proxy: true, 
+      name: 'FaceAPI', // This needs to be unique per-host.
+      cookie: {
+        secure: true, // required for cookies to work on HTTPS
+        httpOnly: false,
+        sameSite: 'none'
+      }
+    }
+  )
+);
 
 
 app.post('/fetch_external_image', async (req, res) => {
