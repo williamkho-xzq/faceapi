@@ -53,7 +53,32 @@
 
             <!-- alert-type-selector-control  -->
         </div>
+    </div>
+    <div class="container">
+        <div id="game-canvas">
+            <div id="game-ui">
+                <p id="game-score"></p>
 
+                <div id="game-end-container">
+                    <div id="game-end">
+                        <div id="game-end-title">Game Over!</div>
+                        <a id="game-end-link" href="">Try Again</a>
+                    </div>
+                </div>
+
+                <div id="game-status">
+                    <div class="game-status-item">
+                        <div class="game-status-label">Highscore</div>
+                        <div id="game-highscore-value">0</div>
+                    </div>
+                    <div class="game-status-item">
+                        <div class="game-status-label">Next</div>
+                        <img id="game-next-fruit" src="./assets/img/circle0.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 
@@ -155,7 +180,7 @@
 
         // try to access users webcam and stream the images
         // to the video element
-        const stream = await navigator.mediaDevices.getUserMedia({video: {}})
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
         const videoEl = $('#inputVideo').get(0)
         videoEl.srcObject = stream
     }
@@ -232,7 +257,7 @@
         const previewEl = $('#previewVideo').get(0)
         const previewToggle = $('#previewToggle').get(0)
         document.getElementById('inputVideo').remove();
-        
+
         if (previewEl.style.display === "none") {
             previewEl.style.display = "block";
             renderVideoAndRun(true);
@@ -244,18 +269,20 @@
         }
     }
 
-    function renderVideoAndRun(showVid=false){
+    function renderVideoAndRun(showVid = false) {
         this.video = document.createElement('video');
         this.video.setAttribute('id', 'inputVideo');
         this.video.setAttribute('autoplay', 'muted');
         this.video.setAttribute('onloadedmetadata', "onPlay(this)")
         document.getElementById('previewVideo').appendChild(this.video);
-        let displayVid = showVid==false ? 'none' : 'block';
+        let displayVid = showVid == false ? 'none' : 'block';
         console.log(displayVid)
         document.getElementById('inputVideo').style.display = displayVid;
         run();
     }
 </script>
+<script src="js/matter.js"></script>
+<script src="js/game.js?v=4"></script>
 </body>
 
 </html>
