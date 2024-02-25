@@ -19,10 +19,13 @@
             <div class="indeterminate"></div>
         </div>
 
-        <a class="waves-effect waves-light btn" id="previewToggle" onclick="togglePreviewVideo()">Hide Preview</a>
-        <div id="previewVideo" style="margin-top: 20px;">
+        <a class="waves-effect waves-light btn" id="previewToggle" onclick="togglePreviewVideo()">Show Preview</a>
+        <div id="loading">
+            <img id="loading-image" src="loading.gif" alt="Loading..." />
+        </div>
+        <div id="previewVideo" style="margin-top: 20px; display: none;">
             <div style="position: relative" class="margin">
-                <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
+                <!-- <video onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video> -->
                 <canvas id="overlay" />
             </div>
         </div>
@@ -75,7 +78,7 @@
         if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
             return setTimeout(() => onPlay())
 
-
+        $('#loading').hide()
         const options = getFaceDetectorOptions()
 
         const ts = Date.now()
@@ -217,22 +220,40 @@
 
     $(document).ready(function () {
         renderNavBar('#navbar', 'webcam_face_landmark_detection')
+        renderVideoAndRun()
         initFaceDetectionControls()
-        run()
+        // run()
         alertSelectionOnChange()
         // console.log("Hello world");
     })
 
     function togglePreviewVideo() {
+        $('#loading').show()
         const previewEl = $('#previewVideo').get(0)
         const previewToggle = $('#previewToggle').get(0)
+        document.getElementById('inputVideo').remove();
+        
         if (previewEl.style.display === "none") {
             previewEl.style.display = "block";
+            renderVideoAndRun(true);
             previewToggle.textContent = "Hide Preview";
         } else {
             previewEl.style.display = "none";
+            renderVideoAndRun();
             previewToggle.textContent = "Show Preview";
         }
+    }
+
+    function renderVideoAndRun(showVid=false){
+        this.video = document.createElement('video');
+        this.video.setAttribute('id', 'inputVideo');
+        this.video.setAttribute('autoplay', 'muted');
+        this.video.setAttribute('onloadedmetadata', "onPlay(this)")
+        document.getElementById('previewVideo').appendChild(this.video);
+        let displayVid = showVid==false ? 'none' : 'block';
+        console.log(displayVid)
+        document.getElementById('inputVideo').style.display = displayVid;
+        run();
     }
 </script>
 </body>
