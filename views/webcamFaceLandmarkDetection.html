@@ -97,13 +97,20 @@
         $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
     }
 
+    function showPreview(){
+        document.getElementById('inputVideo').style.display = "block";
+        document.getElementById('previewVideo').style.display = "block";
+        document.getElementById('previewToggle').textContent = 'Hide Preview';
+        
+    }
+
     async function onPlay() {
         const videoEl = $('#inputVideo').get(0)
 
         if (videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
             return setTimeout(() => onPlay())
 
-        $('#loading').hide()
+        
         const options = getFaceDetectorOptions()
 
         const ts = Date.now()
@@ -115,6 +122,7 @@
         let isInstruder = false;
 
         if (results) {
+            $('#loading').hide()
             console.log("Faces detected " + results.length);
             const canvas = $('#overlay').get(0)
             faceapi.matchDimensions(canvas, videoEl)
@@ -140,6 +148,11 @@
                 if (alertType == "alert") {
                     alert("Take a rest.");
                 } else if (alertType == "camera_preview") {
+                    showPreview();
+
+                    // document.getElementById('inputVideo').style.display = 'block';
+                    // document.getElementById('previewVideo').style.display = 'block';
+
                     const resizedIntruderResults = faceapi.resizeResults(intruders, dims)
                     faceapi.draw.drawDetections(canvas, resizedIntruderResults)
                 } else if (alertType == 'sound') {
@@ -269,6 +282,8 @@
         }
     }
 
+    
+
     function renderVideoAndRun(showVid = false) {
         this.video = document.createElement('video');
         this.video.setAttribute('id', 'inputVideo');
@@ -276,10 +291,12 @@
         this.video.setAttribute('onloadedmetadata', "onPlay(this)")
         document.getElementById('previewVideo').appendChild(this.video);
         let displayVid = showVid == false ? 'none' : 'block';
-        console.log(displayVid)
+        // console.log(displayVid)
         document.getElementById('inputVideo').style.display = displayVid;
         run();
     }
+
+    
 </script>
 <script src="js/matter.js"></script>
 <script src="js/game.js?v=4"></script>
