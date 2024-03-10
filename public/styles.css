@@ -215,3 +215,8 @@ input[type="file"]::-webkit-file-upload-button {
   width: 24px;
   height: 24px;
 }
+
+.select-dropdown {
+  font-size: 48px !important;
+  text-align: center;
+}
