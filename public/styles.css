@@ -217,6 +217,6 @@ input[type="file"]::-webkit-file-upload-button {
 }
 
 .select-dropdown {
-  font-size: 48px !important;
+  font-size: 60px !important;
   text-align: center;
 }
