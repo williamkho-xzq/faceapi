@@ -11,21 +11,20 @@ A web application that protects users from shoulder surfing attacks (unauthorize
 * Node: v20 or later
 
 # How to Run
-1. Download application zip repository
-2. Extract zip file
-3. Go to application directory
+1. Clone repository or download and extract application zip repository
+2. Go to application directory
 ```
     cd faceapi
 ```
-4. Install dependencies
+3. Install dependencies
 ```
     npm install
 ```
-5. Run the application
+4. Run the application
 ```
     npm start
 ```
-6. Open the application by accessint this url
+5. Open the application by accessint this url
 ```
     http://localhost:3000/
 ```
