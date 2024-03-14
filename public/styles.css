@@ -220,3 +220,19 @@ input[type="file"]::-webkit-file-upload-button {
   font-size: 60px !important;
   text-align: center;
 }
+
+.low-brightness {
+  filter: brightness(0.2);
+  -webkit-filter: brightness(0.2);
+  /* background-color: #28282B; */
+}
+
+.high-brightness {
+  filter: brightness(1);
+  -webkit-filter: brightness(1);
+  /* background-color: white; */
+}
+
+html {
+  background-color: white;
+}

@@ -159,7 +159,7 @@
                     var sound = new Audio('sound.wav');
                     sound.play()
                 } else if (alertType == "brightness") {
-                    setBrightness(20);
+                    dimBrightness(true);
                 } else {
                     navigator.vibrate([
                         100, 30, 100, 30, 100, 30, 200, 30, 200, 30, 200, 30, 100, 30, 100, 30, 100,
@@ -180,9 +180,19 @@
         setTimeout(() => onPlay())
     }
 
-    function setBrightness(val) {
+    function dimBrightness(shouldDim) {
         let body = document.getElementsByTagName("html")[0];
-        body.setAttribute("style", "filter: brightness(" + val + "%);");
+        if (!shouldDim) {
+            body.classList.remove('low-brightness');
+            body.classList.add('high-brightness');
+            // alert("remove faq display!");
+        } else {
+            body.classList.remove('high-brightness');
+            body.classList.add('low-brightness');
+            // alert("add faq display!");
+        }
+        // body.setAttribute("style", "filter: brightness(" + val + "%); !important");
+        // body.add()
     }
 
     async function run() {
@@ -252,7 +262,7 @@
     // }
     function alertSelectionOnChange() {
         $('#selectAlertType').on('change', function () {
-            setBrightness(100);
+            dimBrightness(false);
         })
     }
 
